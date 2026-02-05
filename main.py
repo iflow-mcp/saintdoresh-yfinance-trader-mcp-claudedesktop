@@ -15,10 +15,10 @@ mcp = FastMCP("yfinance-trader")
 @mcp.tool("get_stock_quote")
 async def get_stock_quote(symbol: str) -> Dict[str, Any]:
     """Get real-time stock quote information.
-    
+
     Args:
         symbol (str): Stock symbol (e.g., AAPL, MSFT, GOOGL)
-    
+
     Returns:
         Dict containing current stock price and related information
     """
@@ -40,10 +40,10 @@ async def get_stock_quote(symbol: str) -> Dict[str, Any]:
 @mcp.tool("get_company_overview")
 async def get_company_overview(symbol: str) -> Dict[str, Any]:
     """Get company information, financial ratios, and other key metrics.
-    
+
     Args:
         symbol (str): Stock symbol (e.g., AAPL, MSFT, GOOGL)
-    
+
     Returns:
         Dict containing company information and key metrics
     """
@@ -68,11 +68,11 @@ async def get_company_overview(symbol: str) -> Dict[str, Any]:
 @mcp.tool("get_time_series_daily")
 async def get_time_series_daily(symbol: str, outputsize: str = "compact") -> Dict[str, Any]:
     """Get daily time series stock data.
-    
+
     Args:
         symbol (str): Stock symbol (e.g., AAPL, MSFT, GOOGL)
         outputsize (str): Output size: 'compact' (latest 100 data points) or 'full' (up to 20 years of data)
-    
+
     Returns:
         Dict containing historical daily price data
     """
@@ -80,7 +80,7 @@ async def get_time_series_daily(symbol: str, outputsize: str = "compact") -> Dic
         stock = yf.Ticker(symbol)
         period = "3mo" if outputsize == "compact" else "max"
         history = stock.history(period=period)
-        
+
         data = []
         for date, row in history.iterrows():
             data.append({
@@ -91,7 +91,7 @@ async def get_time_series_daily(symbol: str, outputsize: str = "compact") -> Dic
                 "close": row["Close"],
                 "volume": row["Volume"]
             })
-        
+
         return {
             "symbol": symbol,
             "timeSeriesDaily": data
@@ -103,17 +103,17 @@ async def get_time_series_daily(symbol: str, outputsize: str = "compact") -> Dic
 @mcp.tool("search_symbol")
 async def search_symbol(keywords: str) -> Dict[str, Any]:
     """Search for stocks, ETFs, mutual funds, or other securities.
-    
+
     Args:
         keywords (str): Keywords to search for (e.g., apple, microsoft, tech)
-    
+
     Returns:
         Dict containing search results
     """
     try:
         tickers = yf.Tickers(keywords)
         results = []
-        
+
         for symbol in keywords.split():
             try:
                 info = tickers.tickers[symbol].info
@@ -125,7 +125,7 @@ async def search_symbol(keywords: str) -> Dict[str, Any]:
                 })
             except:
                 continue
-                
+
         return {"results": results}
     except Exception as e:
         logger.error(f"Error searching for {keywords}: {str(e)}")
@@ -134,23 +134,23 @@ async def search_symbol(keywords: str) -> Dict[str, Any]:
 @mcp.tool("get_recommendations")
 async def get_recommendations(symbol: str) -> Dict[str, Any]:
     """Get analyst recommendations for a stock.
-    
+
     Args:
         symbol (str): Stock symbol (e.g., AAPL, MSFT, GOOGL)
-    
+
     Returns:
         Dict containing analyst recommendations including strongBuy, buy, hold, sell, strongSell counts
     """
     try:
         stock = yf.Ticker(symbol)
         recommendations = stock.recommendations
-        
+
         if recommendations is None or recommendations.empty:
             return {
                 "symbol": symbol,
                 "recommendations": []
             }
-            
+
         # Convert the recommendations DataFrame to a list of dictionaries
         recs = []
         for index, row in recommendations.iterrows():
@@ -163,7 +163,7 @@ async def get_recommendations(symbol: str) -> Dict[str, Any]:
                 "strongSell": int(row.get("strongSell", 0))
             }
             recs.append(rec_data)
-            
+
         return {
             "symbol": symbol,
             "recommendations": recs
@@ -175,23 +175,23 @@ async def get_recommendations(symbol: str) -> Dict[str, Any]:
 @mcp.tool("get_insider_transactions")
 async def get_insider_transactions(symbol: str) -> Dict[str, Any]:
     """Get insider transactions for a company.
-    
+
     Args:
         symbol (str): Stock symbol (e.g., AAPL, MSFT, GOOGL)
-    
+
     Returns:
         Dict containing recent insider transactions
     """
     try:
         stock = yf.Ticker(symbol)
         insider = stock.insider_transactions
-        
+
         if insider is None or insider.empty:
             return {
                 "symbol": symbol,
                 "transactions": []
             }
-            
+
         transactions = []
         for index, row in insider.iterrows():
             transaction = {
@@ -207,7 +207,7 @@ async def get_insider_transactions(symbol: str) -> Dict[str, Any]:
                 "ownership": row.get("Ownership", "")
             }
             transactions.append(transaction)
-            
+
         return {
             "symbol": symbol,
             "transactions": transactions
@@ -216,5 +216,9 @@ async def get_insider_transactions(symbol: str) -> Dict[str, Any]:
         logger.error(f"Error fetching insider transactions for {symbol}: {str(e)}")
         return {"error": f"Failed to fetch insider transactions for {symbol}"}
 
-if __name__ == "__main__":
+def main():
+    """Main entry point for the MCP server."""
     mcp.run()
+
+if __name__ == "__main__":
+    main()
