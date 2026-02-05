@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "iflow-mcp_saintdoresh-yfinance-trader"
-version = "0.1.0"
+version = "0.1.1"
 description = "YFinance Trader MCP Tool for Claude Desktop"
 authors = [
     {name = "Your Name", email = "your.email@example.com"}
@@ -19,6 +19,7 @@ dependencies = [
     "pydantic>=2.4.2",
     "requests>=2.31.0",
     "pandas>=2.1.0",
+    "mcp>=1.3.0",
 ]
 
 [project.scripts]

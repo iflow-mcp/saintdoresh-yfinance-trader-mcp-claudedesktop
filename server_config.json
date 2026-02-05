@@ -1,0 +1,1 @@
+{"serverConfig": "{\"mcpServers\":{\"yfinance-trader\":{\"command\":\"uvx\",\"args\":[\"--from\",\"iflow-mcp_saintdoresh-yfinance-trader\",\"yfinance-trader\",\"--transport\",\"stdio\"],\"values\":{}}}}"}
